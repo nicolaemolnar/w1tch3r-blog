@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
+const HEADER_OFFSET = 96; // px
+
 export default function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
@@ -11,4 +13,17 @@ export default function ScrollToTop() {
   }, [pathname, hash]);
 
   return null;
+}
+
+export function scrollToId(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const y = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
+  window.scrollTo({
+    top: y,
+    behavior: prefersReducedMotion() ? "auto" : "smooth",
+  });
+
+  history.replaceState(null, "", `#${encodeURIComponent(id)}`);
 }

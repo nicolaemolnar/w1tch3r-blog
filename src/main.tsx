@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
-import ScrollToTop from "./components/ScrollToTop";
+import Scroll from "./components/Scroll";
 
 import Home from "./pages/Home";
 import Projects from "./pages/Projects";
@@ -13,12 +13,13 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Backlog from "./pages/Backlog";
 import NotFound from "./pages/NotFound";
+import "./styles/markdown.css";
 import "./styles/global.css";
 
 function AppRouter() {
   return (
     <BrowserRouter>
-      <ScrollToTop />
+      <Scroll />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />

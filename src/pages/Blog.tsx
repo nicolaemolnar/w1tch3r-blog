@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type Key } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Card from "../components/Card";
 import Tag from "../components/Tag";
-import { posts } from "../data/posts";
+import { posts, recentPosts } from "../data/posts";
 import { formatDate } from "../utils/format";
 import {
   filterAndSortPosts,
@@ -179,7 +179,7 @@ export default function Blog() {
                 {isRecentlyPublished(p, 14) && <span className="badge">NEW</span>}
               </div>
               <p className="muted">{formatDate(p.date)}</p>
-              <p className="muted">{p.excerpt}</p>
+              <p className="muted">{p.summary}</p>
               <div className="tags">
                 {p.tags.map((t) => (
                   <Tag key={t} label={t} />
@@ -208,7 +208,7 @@ export default function Blog() {
                 <span className="muted">{formatDate(p.date)}</span>
               </div>
 
-              <p className="muted">{p.excerpt}</p>
+              <p className="muted">{p.summary}</p>
 
               <div className="tags">
                 {p.tags.map((t) => (

@@ -1,33 +1,50 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
-import './index.css'
-import App from './App.tsx'
-import Home from "./pages/Home"
-import Blog from "./pages/Blog"
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./components/Layout";
+import ScrollToTop from "./components/ScrollToTop";
 
+import Home from "./pages/Home";
+import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
+import Blog from "./pages/Blog";
+import Post from "./pages/Post";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Backlog from "./pages/Backlog";
+import NotFound from "./pages/NotFound";
+import "./styles/global.css";
 
-function Shell() { 
+function AppRouter() {
   return (
     <BrowserRouter>
-      <header style={{ padding: 24, display: "flex", gap: 12 }}>
-        <Link to="/">Home</Link>
-        <Link to="/blog">Blog</Link>
-      </header>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
 
-      <main style={{ padding: 24 }}>
-        <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:slug" element={<ProjectDetail />} />
+
           <Route path="/blog" element={<Blog />} />
-          <Route path="/home" element={<Home />} />
-        </Routes>
-      </main>
+          <Route path="/blog/:slug" element={<Post />} />
+
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/backlog" element={<Backlog />} />
+
+          {/* Alias opcional */}
+          <Route path="/home" element={<Navigate to="/" replace />} />
+
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Shell />
-  </StrictMode>,
-)
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <AppRouter />
+  </React.StrictMode>
+);

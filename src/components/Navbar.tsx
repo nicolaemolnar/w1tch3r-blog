@@ -6,7 +6,7 @@ function cx({ isActive }: { isActive: boolean }) {
 
 export default function Navbar() {
   return (
-    <header className="header">
+    <header data-site-header className="header">
       <div className="container header-inner">
         <NavLink to="/" className="brand">
           <span className="brand-dot" />

@@ -15,6 +15,7 @@ import Backlog from "./pages/Backlog";
 import NotFound from "./pages/NotFound";
 import "./styles/markdown.css";
 import "./styles/global.css";
+import "./styles/post.css";
 
 function AppRouter() {
   return (

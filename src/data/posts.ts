@@ -1,6 +1,5 @@
 import fm from "front-matter";
 
-
 type FrontMatter = {
   title?: string;
   date?: string;
@@ -13,14 +12,14 @@ type FrontMatter = {
 export type BlogPost = {
   slug: string;
   title: string;
-  date: string;       // ISO o YYYY-MM-DD
+  date: string; // ISO o YYYY-MM-DD
   tags: string[];
   summary: string;
   draft: boolean;
-  content: string;    // markdown
+  content: string; // markdown
 };
 
-type BlogPostMeta = Omit<BlogPost, "content">;
+export type BlogPostMeta = Omit<BlogPost, "content">;
 
 const modules = import.meta.glob("./posts/*.md", { as: "raw", eager: true });
 
@@ -38,8 +37,8 @@ function asBoolean(v: unknown, fallback = false): boolean {
 }
 
 function asTags(v: unknown): string[] {
-  if (Array.isArray(v)) return v.map(String).map(s => s.trim()).filter(Boolean);
-  if (typeof v === "string") return v.split(",").map(s => s.trim()).filter(Boolean);
+  if (Array.isArray(v)) return v.map(String).map((s) => s.trim()).filter(Boolean);
+  if (typeof v === "string") return v.split(",").map((s) => s.trim()).filter(Boolean);
   return [];
 }
 
@@ -70,8 +69,7 @@ const all: BlogPost[] = Object.entries(modules).map(([path, raw]) => {
   const tags = asTags(data.tags);
   const draft = asBoolean(data.draft, false);
 
-  const summary =
-    asString(data.summary, "") || excerpt(content);
+  const summary = asString(data.summary, "") || excerpt(content);
 
   return {
     slug,
@@ -80,12 +78,12 @@ const all: BlogPost[] = Object.entries(modules).map(([path, raw]) => {
     tags,
     summary,
     draft,
-    content: content.trim(),
+    content,
   };
 });
 
 // fuera drafts por defecto
-const published = all.filter(p => !p.draft);
+const published = all.filter((p) => !p.draft);
 
 // orden por fecha desc (si no hay fecha válida, cae al final)
 published.sort((a, b) => {
@@ -94,11 +92,16 @@ published.sort((a, b) => {
   return tb - ta;
 });
 
-const bySlug = new Map(published.map(p => [p.slug, p] as const));
+const bySlug = new Map(published.map((p) => [p.slug, p] as const));
 
-export const posts: BlogPostMeta[] = published.map(({ content, ...meta }) => meta);
+// ✅ IMPORTANTE: posts ahora incluye content para poder buscar en contenido
+export const posts: BlogPost[] = published;
 
-export const recentPosts: BlogPostMeta[] = posts.slice(0, 5);
+// (Opcional) si en algún sitio quieres solo meta
+export const postsMeta: BlogPostMeta[] = published.map(({ content, ...meta }) => meta);
+
+export const recentPosts: BlogPost[] = posts.slice(0, 5);
+export const recentPostsMeta: BlogPostMeta[] = postsMeta.slice(0, 5);
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return bySlug.get(slug);

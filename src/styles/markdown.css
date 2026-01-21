@@ -76,3 +76,12 @@
   display: block;
   overflow-x: auto; /* tablas largas no rompen el layout */
 }
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  scroll-margin-top: 96px; /* mismo valor que HEADER_OFFSET */
+}

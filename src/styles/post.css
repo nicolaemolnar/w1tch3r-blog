@@ -1,0 +1,116 @@
+.postLayout {
+  position: relative;
+}
+
+.postContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.postHeader {
+  margin-bottom: 28px;
+}
+
+.postTitle {
+  font-size: 32px;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.postMeta {
+  margin-top: 10px;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+/* Sidebar fixed (desktop) */
+.postSidebar {
+  position: fixed;
+  right: 0;
+  height: calc(100vh - 96px);
+  padding: 0 24px 24px 0;
+  z-index: 20;
+}
+
+.postSidebarInner {
+  height: 100%;
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.20);
+  backdrop-filter: blur(10px);
+  border-radius: 18px 0 0 18px;
+  padding: 16px;
+}
+
+.postSidebarTitle {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+/* TOC buttons */
+.postTocNav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.postTocBtn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font-size: 13px;
+  opacity: 0.78;
+  padding: 6px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.postTocBtn:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.05);
+}
+
+.postTocBtn.active {
+  opacity: 1;
+  font-weight: 700;
+  background: rgba(255,255,255,0.06);
+}
+
+.postTocBtn.lvl3 { padding-left: 18px; }
+.postTocBtn.lvl4 { padding-left: 30px; }
+
+.postBackTop {
+  margin-top: 14px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 8px 6px;
+}
+
+.postBackTop:hover { opacity: 1; }
+
+/* TOC móvil */
+.postTocMobile {
+  display: none;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 18px;
+}
+.postTocMobile summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* Responsive: en pantallas pequeñas el sidebar pasa a “normal” y se muestra el TOC móvil */
+@media (max-width: 1100px) {
+  .postSidebar { display: none; }
+  .postTocMobile { display: block; }
+}

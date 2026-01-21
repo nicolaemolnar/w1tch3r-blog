@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState, type Key } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Card from "../components/Card";
 import Tag from "../components/Tag";
-import { posts, recentPosts } from "../data/posts";
+import { posts } from "../data/posts";
 import { formatDate } from "../utils/format";
 import {
   filterAndSortPosts,

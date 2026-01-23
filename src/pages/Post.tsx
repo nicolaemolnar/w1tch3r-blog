@@ -4,16 +4,16 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 
-import { getPostBySlug } from "../data/posts";
+import { getPostBySlug, type BlogPost } from "../data/posts";
 import { buildTocFromHeadings, extractHeadings, type TocItem } from "../utils/toc";
 
 function prefersReducedMotion() {
   return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 }
 
-const HEADER_OFFSET = 96;      // ajusta si tu navbar fija tapa títulos
-const SIDEBAR_WIDTH = 320;     // ancho del sidebar
-const SIDEBAR_GAP = 24;        // separación contenido-sidebar
+const HEADER_OFFSET = 96;
+const SIDEBAR_WIDTH = 320;
+const SIDEBAR_GAP = 24;
 
 function scrollToHeading(id: string) {
   const el = document.getElementById(id);
@@ -31,14 +31,82 @@ function scrollToHeading(id: string) {
 
 export default function PostPage() {
   const { slug } = useParams<{ slug: string }>();
-  const post = slug ? getPostBySlug(slug) : undefined;
 
-  if (!post) return <Navigate to="/blog" replace />;
+  // ✅ Hooks SIEMPRE en el mismo orden
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  const headings = useMemo(() => extractHeadings(post.content), [post.slug, post.content]);
+  // Derivados seguros (para que useMemo exista siempre)
+  const postSlug = post?.slug ?? slug ?? "";
+  const content = post?.content ?? "";
+
+  const headings = useMemo(() => {
+    // Si aún no hay post, no hay headings
+    if (!content) return [];
+    return extractHeadings(content);
+  }, [postSlug, content]);
+
   const toc = useMemo(() => buildTocFromHeadings(headings), [headings]);
 
-  const [activeId, setActiveId] = useState<string>(toc[0]?.id ?? "");
+  const [activeId, setActiveId] = useState<string>("");
+
+  // Cargar post (async)
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      if (!slug) {
+        console.log("[Post] no slug param -> not found");
+        if (!cancelled) {
+          setNotFound(true);
+          setPost(null);
+          setLoading(false);
+        }
+        return;
+      }
+
+      console.log("[Post] load start slug =", slug);
+      setLoading(true);
+      setNotFound(false);
+
+      try {
+        const p = await getPostBySlug(slug);
+        if (cancelled) return;
+
+        if (!p) {
+          console.log("[Post] load result: NOT FOUND slug =", slug);
+          setPost(null);
+          setNotFound(true);
+        } else {
+          console.log("[Post] load result: FOUND", {
+            slug: p.slug,
+            title: p.title,
+            contentLength: p.content?.length ?? 0,
+          });
+          setPost(p);
+          setNotFound(false);
+        }
+      } catch (e) {
+        console.error("[Post] load error", e);
+        if (cancelled) return;
+        setPost(null);
+        setNotFound(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  // Cuando cambia el toc, fija activeId inicial
+  useEffect(() => {
+    if (toc[0]?.id) setActiveId(toc[0].id);
+  }, [toc]);
 
   // Scroll-spy
   useEffect(() => {
@@ -63,10 +131,12 @@ export default function PostPage() {
 
     elements.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
-  }, [post.slug, toc]);
+  }, [postSlug, toc]);
 
   // Hash al entrar (ya con IDs reales del DOM)
   useEffect(() => {
+    if (!post) return; // solo cuando ya hay contenido renderizable
+
     const hash = window.location.hash;
     if (!hash) return;
 
@@ -74,12 +144,28 @@ export default function PostPage() {
     requestAnimationFrame(() => {
       if (document.getElementById(id)) scrollToHeading(id);
     });
-  }, [post.slug]);
+  }, [post]);
 
   const onTocClick = (item: TocItem) => {
     scrollToHeading(item.id);
     setActiveId(item.id);
   };
+
+  // ✅ Render condicional DESPUÉS de hooks
+  if (loading) {
+    return (
+      <div className="stack-lg">
+        <header className="stack">
+          <h1 className="title">Cargando…</h1>
+          <p className="muted">Cargando post…</p>
+        </header>
+      </div>
+    );
+  }
+
+  if (notFound || !post) {
+    return <Navigate to="/blog" replace />;
+  }
 
   return (
     <div className="postLayout">
@@ -122,10 +208,7 @@ export default function PostPage() {
           ) : null}
 
           <article className="markdown">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeSlug]}
-            >
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
               {post.content}
             </ReactMarkdown>
           </article>
@@ -164,7 +247,9 @@ export default function PostPage() {
 
             <button
               className="postBackTop"
-              onClick={() => window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" })}
+              onClick={() =>
+                window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" })
+              }
               type="button"
             >
               Volver arriba

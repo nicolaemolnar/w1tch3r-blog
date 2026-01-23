@@ -22,7 +22,7 @@ export function scrollToId(id: string) {
   const y = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
   window.scrollTo({
     top: y,
-    behavior: prefersReducedMotion() ? "auto" : "smooth",
+    behavior: "smooth",
   });
 
   history.replaceState(null, "", `#${encodeURIComponent(id)}`);

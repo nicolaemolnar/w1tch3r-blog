@@ -1,13 +1,28 @@
 import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import Card from "../components/Card";
 import Tag from "../components/Tag";
 import { projects } from "../data/projects";
-import { posts } from "../data/posts";
+import { getPostsMeta, type BlogPostMeta } from "../data/posts";
 import { sortByDateDesc, formatDate } from "../utils/format";
 
 export default function Home() {
   const featuredProjects = projects.slice(0, 3);
-  const recentPosts = sortByDateDesc(posts).slice(0, 3);
+
+  const [posts, setPosts] = useState<BlogPostMeta[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+
+  useEffect(() => {
+    getPostsMeta()
+      .then(setPosts)
+      .catch((e) => {
+        console.error(e);
+        setPosts([]);
+      })
+      .finally(() => setLoadingPosts(false));
+  }, []);
+
+  const recentPosts = useMemo(() => sortByDateDesc(posts).slice(0, 3), [posts]);
 
   return (
     <div className="stack-lg">
@@ -78,22 +93,26 @@ export default function Home() {
           <Link className="inline-link" to="/blog">Ver blog →</Link>
         </div>
 
-        <div className="stack">
-          {recentPosts.map((post) => (
-            <Card key={post.slug}>
-              <div className="row space-between">
-                <h3 className="h3">
-                  <Link to={`/blog/${post.slug}`} className="plain-link">{post.title}</Link>
-                </h3>
-                <span className="muted">{formatDate(post.date)}</span>
-              </div>
-              <p className="muted">{post.excerpt}</p>
-              <div className="tags">
-                {post.tags.map(t => <Tag key={t} label={t} />)}
-              </div>
-            </Card>
-          ))}
-        </div>
+        {loadingPosts ? (
+          <Card><p className="muted">Cargando posts…</p></Card>
+        ) : (
+          <div className="stack">
+            {recentPosts.map((post) => (
+              <Card key={post.slug}>
+                <div className="row space-between">
+                  <h3 className="h3">
+                    <Link to={`/blog/${post.slug}`} className="plain-link">{post.title}</Link>
+                  </h3>
+                  <span className="muted">{formatDate(post.date)}</span>
+                </div>
+                <p className="muted">{post.summary}</p>
+                <div className="tags">
+                  {post.tags.map((t) => <Tag key={t} label={t} />)}
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

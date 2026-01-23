@@ -1,3 +1,4 @@
+// src/data/posts.ts
 import fm from "front-matter";
 
 type FrontMatter = {
@@ -21,10 +22,14 @@ export type BlogPost = {
 
 export type BlogPostMeta = Omit<BlogPost, "content">;
 
-const modules = import.meta.glob("./posts/*.md", { as: "raw", eager: true });
+function baseUrl(): string {
+  // En dev suele ser "/"
+  // En GitHub Pages será "/<repo>/"
+  const b = import.meta.env.BASE_URL ?? "/";
+  return b.endsWith("/") ? b : `${b}/`;
+}
 
-function slugFromPath(path: string) {
-  const file = path.split("/").pop() ?? path;
+function slugFromFile(file: string) {
   return file.replace(/\.md$/i, "");
 }
 
@@ -58,12 +63,33 @@ function excerpt(md: string, maxLen = 180) {
   return txt.length > maxLen ? `${txt.slice(0, maxLen - 1)}…` : txt;
 }
 
-const all: BlogPost[] = Object.entries(modules).map(([path, raw]) => {
+// -----------------------------
+// Runtime loading (fetch) + cache
+// -----------------------------
+let cachePosts: BlogPost[] | null = null;
+let cacheMeta: BlogPostMeta[] | null = null;
+
+async function fetchIndex(): Promise<string[]> {
+  const url = `${baseUrl()}posts/index.json`;
+  const res = await fetch(url, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`No se pudo cargar ${url} (${res.status})`);
+  const data = (await res.json()) as { files?: string[] };
+  return data.files ?? [];
+}
+
+async function fetchRaw(file: string): Promise<string> {
+  const url = `${baseUrl()}posts/${file}`;
+  const res = await fetch(url, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`No se pudo cargar ${url} (${res.status})`);
+  return await res.text();
+}
+
+function buildPostFromRaw(file: string, raw: string): BlogPost {
   const parsed = fm<FrontMatter>(raw);
   const data = parsed.attributes ?? {};
   const content = (parsed.body ?? "").trim();
 
-  const slug = asString(data.slug, slugFromPath(path));
+  const slug = asString(data.slug, slugFromFile(file));
   const title = asString(data.title, slug);
   const date = asString(data.date, "");
   const tags = asTags(data.tags);
@@ -71,38 +97,58 @@ const all: BlogPost[] = Object.entries(modules).map(([path, raw]) => {
 
   const summary = asString(data.summary, "") || excerpt(content);
 
-  return {
-    slug,
-    title,
-    date,
-    tags,
-    summary,
-    draft,
-    content,
-  };
-});
+  return { slug, title, date, tags, summary, draft, content };
+}
 
-// fuera drafts por defecto
-const published = all.filter((p) => !p.draft);
+function sortByDateDesc(posts: BlogPost[]) {
+  posts.sort((a, b) => {
+    const ta = Date.parse(a.date) || 0;
+    const tb = Date.parse(b.date) || 0;
+    return tb - ta;
+  });
+  return posts;
+}
 
-// orden por fecha desc (si no hay fecha válida, cae al final)
-published.sort((a, b) => {
-  const ta = Date.parse(a.date) || 0;
-  const tb = Date.parse(b.date) || 0;
-  return tb - ta;
-});
+/**
+ * Carga posts desde /posts/*.md (public) usando /posts/index.json.
+ * - Filtra drafts por defecto
+ * - Ordena por fecha desc
+ * - Cachea en memoria para no repetir fetch en navegación
+ */
+export async function getPosts(): Promise<BlogPost[]> {
+  if (cachePosts) return cachePosts;
 
-const bySlug = new Map(published.map((p) => [p.slug, p] as const));
+  const files = await fetchIndex();
+  const raws = await Promise.all(files.map((f) => fetchRaw(f)));
 
-// ✅ IMPORTANTE: posts ahora incluye content para poder buscar en contenido
-export const posts: BlogPost[] = published;
+  const all = files.map((f, i) => buildPostFromRaw(f, raws[i]));
 
-// (Opcional) si en algún sitio quieres solo meta
-export const postsMeta: BlogPostMeta[] = published.map(({ content, ...meta }) => meta);
+  const published = all.filter((p) => !p.draft);
+  sortByDateDesc(published);
 
-export const recentPosts: BlogPost[] = posts.slice(0, 5);
-export const recentPostsMeta: BlogPostMeta[] = postsMeta.slice(0, 5);
+  cachePosts = published;
+  cacheMeta = published.map(({ content, ...meta }) => meta);
 
-export function getPostBySlug(slug: string): BlogPost | undefined {
-  return bySlug.get(slug);
+  return cachePosts;
+}
+
+export async function getPostsMeta(): Promise<BlogPostMeta[]> {
+  if (cacheMeta) return cacheMeta;
+  await getPosts(); // rellena cacheMeta
+  return cacheMeta ?? [];
+}
+
+export async function getRecentPosts(n = 5): Promise<BlogPost[]> {
+  const posts = await getPosts();
+  return posts.slice(0, n);
+}
+
+export async function getRecentPostsMeta(n = 5): Promise<BlogPostMeta[]> {
+  const meta = await getPostsMeta();
+  return meta.slice(0, n);
+}
+
+export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
+  const posts = await getPosts();
+  return posts.find((p) => p.slug === slug);
 }

@@ -2,15 +2,16 @@
   "homepage": "http://nicolaemolnar.github.io/w1tch3r-blog/",
   "name": "w1tch3r-blog",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild" : "node scripts/generate-post-index.mjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "move .\\posts .\\dist\\posts && gh-pages -d dist --dotfiles && move .\\dist\\posts .\\posts "
   },
   "dependencies": {
     "front-matter": "^4.0.2",

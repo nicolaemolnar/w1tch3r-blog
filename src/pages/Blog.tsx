@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Card from "../components/Card";
 import Tag from "../components/Tag";
-import { posts } from "../data/posts";
+import { getPosts, type BlogPost } from "../data/posts";
 import { formatDate } from "../utils/format";
 import {
   filterAndSortPosts,
@@ -51,6 +51,33 @@ export default function Blog() {
   // Estado local (UI)
   const [filters, setFilters] = useState<BlogFilters>(() => parseFilters(searchParams));
 
+  // 0) Posts cargados (runtime)
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [postsError, setPostsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getPosts()
+      .then((data) => {
+        setPosts(data);
+      })
+      .catch((e) => {
+        console.error("[Blog] fetch posts: error", e);
+        setPostsError(e instanceof Error ? e.message : String(e));
+        setPosts([]);
+      })
+      .finally(() => {
+        setLoadingPosts(false);
+      });
+  }, []);
+
+  // Log de verificación: una vez loadingPosts sea false, asegúrate de que posts tiene datos
+  useEffect(() => {
+    if (!loadingPosts) {
+    
+    }
+  }, [loadingPosts, posts]);
+
   // 1) Si cambia la URL (back/forward o enlace compartido), actualiza el estado
   useEffect(() => {
     const next = parseFilters(searchParams);
@@ -69,18 +96,19 @@ export default function Blog() {
     const current = searchParams.toString();
     const next = nextSP.toString();
 
-    if (current !== next) {
-      // replace para no “ensuciar” el historial al escribir
-      setSearchParams(nextSP, { replace: true });
-    }
+    if (current !== next) setSearchParams(nextSP, { replace: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
-  const allTags = useMemo(() => getAllTags(posts), []);
-  const tagCounts = useMemo(() => getTagCounts(posts), []);
-  const recentPosts = useMemo(() => getRecentlyPublished(posts, 14, 3), []);
+  // ✅ IMPORTANTÍSIMO: deps correctas
+  const allTags = useMemo(() => getAllTags(posts), [posts]);
+  const tagCounts = useMemo(() => getTagCounts(posts), [posts]);
+  const recentPosts = useMemo(() => getRecentlyPublished(posts, 14, 3), [posts]);
 
-  const filtered = useMemo(() => filterAndSortPosts(posts, filters), [filters]);
+  const filtered = useMemo(() => {
+    const result = filterAndSortPosts(posts, filters);
+    return result;
+  }, [posts, filters]);
 
   function toggleTag(t: string) {
     setFilters((f) => {
@@ -90,8 +118,35 @@ export default function Blog() {
   }
 
   function clearFilters() {
+    // OJO: logs inmediatos aquí verán el valor anterior (setState es async)
     setFilters({ query: "", tags: [], sort: "newest", tagMode: "any" });
-    // Nota: el effect de arriba limpiará la URL
+  }
+
+  // Pantalla de carga mientras llegan los posts
+  if (loadingPosts) {
+    return (
+      <div className="stack-lg">
+        <header className="stack">
+          <h1 className="title">Blog</h1>
+          <p className="lead">Posts cortos y prácticos…</p>
+        </header>
+        <Card><p className="muted">Cargando posts…</p></Card>
+      </div>
+    );
+  }
+
+  if (postsError) {
+    return (
+      <div className="stack-lg">
+        <header className="stack">
+          <h1 className="title">Blog</h1>
+        </header>
+        <Card>
+          <p className="muted">No se pudieron cargar los posts.</p>
+          <p className="muted">{postsError}</p>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -181,9 +236,7 @@ export default function Blog() {
               <p className="muted">{formatDate(p.date)}</p>
               <p className="muted">{p.summary}</p>
               <div className="tags">
-                {p.tags.map((t) => (
-                  <Tag key={t} label={t} />
-                ))}
+                {p.tags.map((t) => <Tag key={t} label={t} />)}
               </div>
             </Card>
           ))}
@@ -211,9 +264,7 @@ export default function Blog() {
               <p className="muted">{p.summary}</p>
 
               <div className="tags">
-                {p.tags.map((t) => (
-                  <Tag key={t} label={t} />
-                ))}
+                {p.tags.map((t) => <Tag key={t} label={t} />)}
               </div>
             </Card>
           ))}

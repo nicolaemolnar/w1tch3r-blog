@@ -1,5 +1,5 @@
 ---
-title: "Despliegue de aplicaciones con Docker-Compose v2"
+title: "Despliegue de aplicaciones con Docker-Compose"
 date: "2022-07-14"
 tags: ["docker", "nodejs", "sw"]
 summary: "Desplegar proyectos en contenedores Docker de manera sencilla y rápida, utilizando docker-compose."

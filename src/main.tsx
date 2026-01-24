@@ -18,8 +18,17 @@ import "./styles/global.css";
 import "./styles/post.css";
 
 function AppRouter() {
+  const params = new URLSearchParams(window.location.search);
+  const p = params.get("p");
+  if (p) {
+    params.delete("p");
+    const clean = params.toString();
+    const nextUrl = `${import.meta.env.BASE_URL}${p.replace(/^\//, "")}${clean ? "?" + clean : ""}`;
+    window.history.replaceState(null, "", nextUrl);
+  }
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Scroll />
       <Routes>
         <Route element={<Layout />}>

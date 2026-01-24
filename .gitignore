@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 ignored
+public/posts
 
 # Editor directories and files
 .vscode/*

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { FaGithub, FaLinkedin, FaXTwitter, FaEnvelope } from "react-icons/fa6";
+import { FaGithub, FaLinkedin, FaXTwitter, FaEnvelope, FaBoxArchive } from "react-icons/fa6";
 
 export type SocialKey = "github" | "linkedin" | "x" | "email";
 
@@ -16,6 +16,7 @@ type Props = {
   linkedin?: string;
   x?: string;
   email?: string;
+  htb?: string;
   variant?: "icon" | "icon+text";
 };
 
@@ -24,6 +25,7 @@ export default function SocialLinks({
   linkedin,
   x,
   email,
+  htb,
   variant = "icon+text",
 }: Props) {
   const links: SocialLink[] = [
@@ -35,6 +37,7 @@ export default function SocialLinks({
       : null,
     x ? { key: "x", label: "X", href: x, icon: <FaXTwitter />, external: true } : null,
     email ? { key: "email", label: "Email", href: `mailto:${email}`, icon: <FaEnvelope /> } : null,
+    htb ? { key: "htb", label: "HackTheBox", href: htb, icon: <FaBoxArchive />, external: true } : null,
   ].filter(Boolean) as SocialLink[];
 
   return (

@@ -5,20 +5,20 @@ export default function Contact() {
   return (
     <div className="stack-lg">
       <header className="stack">
-        <h1 className="title">Contact</h1>
-        <p className="lead">Si quieres hablar de un proyecto, feedback o colaboración, aquí me tienes.</p>
+        <h1 className="title">Contacto</h1>
+        <p className="lead">Si quieres hablar de un proyecto, dar feedback o colaborar con algo, aquí tienes mi información de contacto.</p>
       </header>
 
       <section className="grid-2">
         <Card>
           <h2 className="h2">Directo</h2>
-          <p className="muted">Email y redes:</p>
+          <p className="muted">Email y redes sociales:</p>
 
           <SocialLinks
-            email="tuemail@ejemplo.com"
-            github="https://github.com/usuario"
-            linkedin="https://www.linkedin.com/in/usuario"
-            x="https://x.com/usuario"
+            github="https://github.com/nicolaemolnar"
+            linkedin="https://www.linkedin.com/in/nicolae-alexandru-molnar/"
+            email="nicolae.molnar001@gmail.com"
+            htb="https://app.hackthebox.com/users/2312708"
             variant="icon+text"
           />
         </Card>
@@ -26,7 +26,10 @@ export default function Contact() {
         <Card>
           <h2 className="h2">Disponibilidad</h2>
           <p className="muted">
-            Añade aquí una frase breve: tipo de proyectos, horario, si aceptas freelance, etc.
+            Siempre estoy abierto a recibir correos y mensajes por LinkedIn. Tanto si quieres 
+            colaborar con algún proyecto que tenga entre manos como si quieres charlar o te 
+            interesa mi perfil, siéntete libre de mandarme un mensaje a cualquier hora y te 
+            contestaré en cuanto me sea posible.
           </p>
         </Card>
       </section>

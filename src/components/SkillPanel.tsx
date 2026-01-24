@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+// src/components/SkillPanel.tsx
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Card from "./Card";
 import type { Skill } from "../data/skills";
-import { projects } from "../data/projects";
+import { getProjectsMeta, type ProjectMeta } from "../data/projects";
 
 function levelLabel(level: number) {
   const map: Record<number, string> = {
@@ -26,6 +27,35 @@ export default function SkillPanel({
 }) {
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const prevOverflowRef = useRef<string>("");
+
+  // --- Projects meta (nuevo mecanismo: fetch + cache) ---
+  const [projects, setProjects] = useState<ProjectMeta[]>([]);
+  const [loadingProjects, setLoadingProjects] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    // Solo cargamos si hace falta (cuando el panel se abre)
+    if (!open) return;
+
+    async function load() {
+      try {
+        setLoadingProjects(true);
+        const meta = await getProjectsMeta();
+        if (!cancelled) setProjects(meta);
+      } catch (e) {
+        console.error("[SkillPanel] error loading projects meta", e);
+        if (!cancelled) setProjects([]);
+      } finally {
+        if (!cancelled) setLoadingProjects(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
 
   // ESC para cerrar
   useEffect(() => {
@@ -56,16 +86,17 @@ export default function SkillPanel({
     if (open) closeBtnRef.current?.focus();
   }, [open]);
 
-  const related = (skill?.relatedProjectSlugs ?? [])
-    .map((slug) => projects.find((p) => p.slug === slug))
-    .filter(Boolean);
+  const related = useMemo(() => {
+    const slugs = skill?.relatedProjectSlugs ?? [];
+    if (!slugs.length) return [];
+
+    const map = new Map(projects.map((p) => [p.slug, p]));
+    return slugs.map((s) => map.get(s)).filter(Boolean) as ProjectMeta[];
+  }, [skill, projects]);
 
   // Render siempre, animamos por CSS (open/close)
   return (
-    <div
-      className={open ? "drawerOverlay open" : "drawerOverlay"}
-      aria-hidden={!open}
-    >
+    <div className={open ? "drawerOverlay open" : "drawerOverlay"} aria-hidden={!open}>
       {/* Backdrop: click para cerrar */}
       <button
         className="drawerBackdrop"
@@ -85,12 +116,7 @@ export default function SkillPanel({
           <div className="stack">
             <div className="row space-between">
               <h3 className="h3">{skill?.name ?? "—"}</h3>
-              <button
-                ref={closeBtnRef}
-                className="btn ghost small"
-                type="button"
-                onClick={onClose}
-              >
+              <button ref={closeBtnRef} className="btn ghost small" type="button" onClick={onClose}>
                 Cerrar
               </button>
             </div>
@@ -140,9 +166,7 @@ export default function SkillPanel({
               <Card>
                 <h4 className="h2">Experiencia</h4>
                 <ul className="list">
-                  {typeof skill.experience.years === "number" && (
-                    <li>{skill.experience.years} año(s) aprox.</li>
-                  )}
+                  {typeof skill.experience.years === "number" && <li>{skill.experience.years} año(s) aprox.</li>}
                   {skill.experience.contexts.map((x) => (
                     <li key={x}>{x}</li>
                   ))}
@@ -150,10 +174,14 @@ export default function SkillPanel({
 
                 {skill.tools?.length ? (
                   <>
-                    <h4 className="h2" style={{ marginTop: 12 }}>Herramientas</h4>
+                    <h4 className="h2" style={{ marginTop: 12 }}>
+                      Herramientas
+                    </h4>
                     <div className="tags">
                       {skill.tools.map((t) => (
-                        <span key={t} className="tag">{t}</span>
+                        <span key={t} className="tag">
+                          {t}
+                        </span>
                       ))}
                     </div>
                   </>
@@ -167,7 +195,9 @@ export default function SkillPanel({
                     {skill.certificates.map((c) => (
                       <li key={`${c.name}-${c.year ?? ""}`}>
                         {c.url ? (
-                          <a href={c.url} target="_blank" rel="noreferrer">{c.name}</a>
+                          <a href={c.url} target="_blank" rel="noreferrer">
+                            {c.name}
+                          </a>
                         ) : (
                           <span>{c.name}</span>
                         )}
@@ -179,14 +209,21 @@ export default function SkillPanel({
                 </Card>
               ) : null}
 
+              {(loadingProjects && (skill.relatedProjectSlugs?.length ?? 0) > 0) ? (
+                <Card>
+                  <h4 className="h2">Proyectos relacionados</h4>
+                  <p className="muted">Cargando proyectos…</p>
+                </Card>
+              ) : null}
+
               {related.length ? (
                 <Card>
                   <h4 className="h2">Proyectos relacionados</h4>
                   <ul className="list">
                     {related.map((p) => (
-                      <li key={p!.slug}>
-                        <Link to={`/projects/${p!.slug}`} onClick={onClose}>
-                          {p!.title}
+                      <li key={p.slug}>
+                        <Link to={`/projects/${p.slug}`} onClick={onClose}>
+                          {p.title}
                         </Link>
                       </li>
                     ))}

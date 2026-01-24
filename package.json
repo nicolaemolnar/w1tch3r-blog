@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild" : "node scripts/generate-post-index.mjs",
+    "prebuild" : "move ./posts ./public && move ./projects ./public && node scripts/generate-index.mjs && move ./public/posts ./ && move ./public/projects ./",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

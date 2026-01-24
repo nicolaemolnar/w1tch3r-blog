@@ -6,11 +6,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild" : "move ./posts ./public && move ./projects ./public && node scripts/generate-index.mjs && move ./public/posts ./ && move ./public/projects ./",
+    "prebuild" : "move ./posts ./public && move ./projects ./public && node scripts/generate-index.mjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "move ./posts ./public && npm run build && node -e \"require('fs').writeFileSync('dist/.nojekyll','')\" && move ./public/posts ./",
+    "predeploy": "npm run build && node -e \"require('fs').writeFileSync('dist/.nojekyll','')\" && move ./public/posts ./ && move ./public/projects ./",
     "deploy": "gh-pages -d dist --dotfiles"
   },
   "dependencies": {

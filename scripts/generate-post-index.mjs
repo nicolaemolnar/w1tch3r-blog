@@ -1,7 +1,7 @@
 import { readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const dir = path.resolve("./posts");
+const dir = path.resolve("./public/posts");
 const files = (await readdir(dir))
   .filter((f) => f.toLowerCase().endsWith(".md"))
   .sort();

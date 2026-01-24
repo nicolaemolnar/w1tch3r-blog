@@ -10,8 +10,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "move .\\posts .\\dist\\posts && gh-pages -d dist --dotfiles && move .\\dist\\posts .\\posts "
+    "predeploy": "move ./posts ./public && npm run build && node -e \"require('fs').writeFileSync('dist/.nojekyll','')\" && move ./public/posts ./",
+    "deploy": "gh-pages -d dist --dotfiles"
   },
   "dependencies": {
     "front-matter": "^4.0.2",

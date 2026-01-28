@@ -1,0 +1,261 @@
+/* src/styles/roadmap.css */
+
+/* --------- Controls --------- */
+.rm-controls {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+@media (max-width: 980px) {
+  .rm-controls {
+    grid-template-columns: 1fr;
+  }
+}
+.rm-controlBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rm-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.rm-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  color: var(--text);
+  outline: none;
+}
+.rm-input:focus {
+  border-color: rgba(124, 92, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.12);
+}
+.rm-small {
+  font-size: 12px;
+}
+.rm-muted {
+  color: var(--muted);
+}
+.rm-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+}
+
+.rm-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.rm-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+}
+.rm-pill--now {
+  border-color: rgba(124, 92, 255, 0.5);
+}
+.rm-pill--next {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+.rm-pill--later {
+  border-color: rgba(255, 255, 255, 0.12);
+  opacity: 0.95;
+}
+.rm-pill--done {
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+.rm-pill--paused {
+  opacity: 0.75;
+}
+
+.rm-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+.rm-btn {
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+}
+.rm-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.rm-btn--ghost {
+  background: transparent;
+}
+.rm-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  user-select: none;
+  cursor: pointer;
+}
+.rm-check input {
+  accent-color: var(--accent);
+}
+
+/* --------- Graph viewport --------- */
+.graphWrap {
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.graphToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+}
+.graphViewport {
+  position: relative;
+  overflow: auto;
+  max-height: 68vh;
+}
+.graphCanvas {
+  position: relative;
+  width: 100%;
+  min-height: 260px;
+}
+
+/* --------- Node cards (compact) --------- */
+.gNode {
+  position: absolute;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  padding: 10px 10px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+.gNode:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.gNode--selected {
+  border-color: rgba(124, 92, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.14), 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+.gTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.gTitle {
+  font-weight: 650;
+  font-size: 13px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gMiniMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.gBadge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  opacity: 0.95;
+}
+.gBadge--now {
+  border-color: rgba(124, 92, 255, 0.5);
+}
+.gBadge--done {
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+.gBadge--paused {
+  opacity: 0.75;
+}
+.gSub {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.gTagLine {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gFocus {
+  padding: 6px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+}
+.gFocus:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* SVG lines */
+.gSvg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+.gLine {
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 2;
+  fill: none;
+}
+.gLine--accent {
+  stroke: rgba(124, 92, 255, 0.45);
+}
+
+/* tiny legend */
+.legend {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}

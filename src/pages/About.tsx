@@ -33,7 +33,7 @@ export default function About() {
   }, [open]);
 
   const categories = useMemo(() => {
-    const order: SkillCategory[] = ["Frontend", "Backend", "DevOps", "Security", "General"];
+    const order: SkillCategory[] = ["Software" , "Infrastructure" , "Security" , "General" , "Electronic Warfare" , "Soft Skills"];
     const map = new Map<SkillCategory, typeof skills>();
     order.forEach((c) => map.set(c, []));
     skills.forEach((s) => map.get(s.category)!.push(s));
@@ -64,23 +64,42 @@ export default function About() {
       <section className="grid-2">
         <Card>
           <h2 className="h2">Perfil</h2>
-          <p className="muted">Aquí tu resumen “de verdad”.</p>
+          <p className="muted">
+            Soy ingeniero informático con <b>3 años de experiencia en guerra electrónica</b>. En los últimos años me he especializado
+            en <b>ciberseguridad</b>, con foco en el <b>ámbito ofensivo</b>, apoyado por formación de máster y certificaciones como la eJPT.
+          </p>
+
+          <p className="muted">
+            Mi perfil combina mentalidad de atacante y disciplina de ingeniería: vengo de entornos de <b>desarrollo e integración
+            de software</b> y estoy acostumbrado a trabajar con sistemas reales, requisitos, entregables y trazabilidad.
+            Habitualmente participo en actividades de <b>pentesting y red-team sobre redes</b> y entornos de sistemas embebidos,
+            con el objetivo de identificar riesgos, validar controles y elevar el nivel de seguridad.
+          </p>
+
+          <p className="muted">
+            Me motiva especialmente <b>convertir hallazgos técnicos en impacto</b>: desde el reconocimiento y enumeración hasta la
+            explotación controlada y la post-explotación, documentando <b>evidencias</b> y proponiendo <b>mitigaciones accionables</b>.
+            Disfruto automatizando tareas, construyendo tooling propio y manteniéndome al día con TTPs y vulnerabilidades.
+          </p>
         </Card>
 
         <Card>
           <h2 className="h2">Enfoque</h2>
           <ul className="list">
-            <li>Calidad: estructura, naming, consistencia</li>
-            <li>DX: tooling, scripts, automatización simple</li>
-            <li>Documentación: posts y notas</li>
+            <li>Offensive mindset: <b>Metodología personal</b> desarrollada a partir de la práctica en CTF y el entorno laboral.</li>
+            <li>Red-team en redes y entornos embebidos: Enfoque en seguridad práctica orientada a <b>sistemas reales</b>.</li>
+            <li>Reporting útil: <b>Redacción de evidencias</b> claras, narrativa del riesgo y mitigaciones accionables desde el <b>punto de vista del desarrollo</b>.</li>
+            <li><b>Automatización</b> y tooling: Scripting para acelerar procesos repetitivos y garantizar la reproducibilidad.</li>
+            <li>Rigor técnico: <b>Certificación básica (eJPT)</b>, de la que he adquirido habilidades aplicables al entorno profesional. </li>
+            <li>Aprendizaje continuo: laboratorios propios y alojados, CTF, <b>formación técnica e interés</b> por las noticias más recientes de ciberseguridad.</li>
           </ul>
+
         </Card>
       </section>
 
       <section id="stack" className="stack">
         <div className="section-head">
           <h2 className="h2">Stack & Competencias</h2>
-          <span className="muted">Comparte enlaces con ?skill=...</span>
         </div>
 
         <div className="stack">

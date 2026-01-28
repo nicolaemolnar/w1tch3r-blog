@@ -21,6 +21,26 @@ body{
               radial-gradient(1000px 700px at 70% 0%, rgba(124,92,255,0.10), transparent 55%),
               var(--bg);
   color: var(--text);
+  position: relative;
+  min-height: 100vh;
+}
+
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  z-index: -1;          
+  pointer-events: none;
+  
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(124,92,255,0.20), transparent 60%),
+    radial-gradient(1000px 700px at 70% 0%, rgba(124,92,255,0.12), transparent 55%),
+    radial-gradient(900px 650px at 80% 85%, rgba(124,92,255,0.08), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,0.02), transparent 35%),
+    var(--bg);
+
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 a{ color: inherit; }
@@ -370,6 +390,158 @@ main.container{ flex:1; padding: 28px 0 40px; }
   padding: 16px;
   overflow: auto;
 }
+
+/* =========================
+   Skill chips (About.tsx)
+   ========================= */
+
+.skillChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Chip base */
+.skillChip {
+  --chip-radius: 999px;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-radius: var(--chip-radius);
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+
+  color: var(--text, #eaeaea);
+  cursor: pointer;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+/* Borde "premium" con degradado sutil (sin romper el tema) */
+.skillChip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--chip-radius);
+  padding: 1px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.28),
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.18)
+  );
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none;
+  opacity: 0.55;
+  transition: opacity 160ms ease;
+}
+
+.skillChip:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.10) inset;
+}
+
+.skillChip:hover::before {
+  opacity: 0.9;
+}
+
+/* Click feedback */
+.skillChip:active {
+  transform: translateY(0);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.10) inset;
+}
+
+/* Accesibilidad: foco visible */
+.skillChip:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.14),
+    0 0 0 6px rgba(255, 255, 255, 0.08);
+}
+
+/* Layout interno */
+.skillName {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  line-height: 1;
+}
+
+/* Badge nivel */
+.skillMeta {
+  font-size: 12px;
+  line-height: 1;
+
+  padding: 6px 8px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.18);
+  color: rgba(255, 255, 255, 0.82);
+
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+/* Estado activo (cuando skillParam === s.id) */
+.skillChip.active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+}
+
+.skillChip.active::before {
+  opacity: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.40),
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.30)
+  );
+}
+
+.skillChip.active .skillMeta {
+  background: rgba(0, 0, 0, 0.28);
+  border-color: rgba(255, 255, 255, 0.20);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .skillChip,
+  .skillChip::before,
+  .skillMeta {
+    transition: none !important;
+  }
+  .skillChip:hover,
+  .skillChip:active {
+    transform: none !important;
+  }
+}
+
 
 /* Mobile: panel tipo “full screen” */
 @media (max-width: 520px){

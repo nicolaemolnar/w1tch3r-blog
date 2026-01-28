@@ -113,6 +113,28 @@ export const ROADMAP: RoadmapNode[] = [
             impact: 4,
             effort: 2,
           },
+          {
+            id: "linkedin-osint",
+            title: "Project: Enumeración de empleados de una empresa mediante técnicas automatizadas de OSINT en LinkedIn.",
+            description:
+              "Redacción del proyecto de fin de grado sobre OSINT para la recopilación automatizada de datos de empleados de una empresa específica en LinkedIn utilizando técnicas de scraping y análisis de datos.",
+            status: "later",
+            category: "Security",
+            tags: ["osint", "linkedin", "automation"],
+            impact: 4,
+            effort: 3,
+          },
+          {
+            id: "3ll10t-gpt",
+            title: "Project: IA generativa para el desarrollo de Skills avanzadas de ciberseguridad.",
+            description:
+              "Redacción del proyecto de fin de máster sobre IA generativa para el desarrollo de Skills avanzadas de ciberseguridad, que combina tecnología LLM en una API REST que genera un copilot para pentesters nóveles.",
+            status: "later",
+            category: "Security",
+            tags: ["ai", "gpt", "pentesting"],
+            impact: 4,
+            effort: 3,
+          },
         ],
       },
     ],

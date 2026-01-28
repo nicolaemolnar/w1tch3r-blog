@@ -7,6 +7,8 @@ import rehypeSlug from "rehype-slug";
 import { getPostBySlug, type BlogPost } from "../data/posts";
 import { buildTocFromHeadings, extractHeadings, type TocItem } from "../utils/toc";
 
+import { fetchPostStats, countViewOnce, toggleLike } from "../lib/counters";
+
 function prefersReducedMotion() {
   return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 }
@@ -50,6 +52,17 @@ export default function PostPage() {
   const toc = useMemo(() => buildTocFromHeadings(headings), [headings]);
 
   const [activeId, setActiveId] = useState<string>("");
+
+  const API = import.meta.env.VITE_COUNTERS_API as string | undefined;
+
+  const [stats, setStats] = useState<{ views: number; likes: number; liked: boolean }>({
+    views: 0,
+    likes: 0,
+    liked: false,
+  });
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [likeBusy, setLikeBusy] = useState(false);
+
 
   // Cargar post (async)
   useEffect(() => {
@@ -146,6 +159,71 @@ export default function PostPage() {
     });
   }, [post]);
 
+  useEffect(() => {
+    if (!API) return;
+    if (!postSlug) return;
+
+    let cancelled = false;
+    setStatsLoading(true);
+
+    (async () => {
+      try {
+        const data = await fetchPostStats(API, postSlug);
+        if (cancelled) return;
+        setStats({
+          views: Number(data.views ?? 0),
+          likes: Number(data.likes ?? 0),
+          liked: Boolean(data.liked ?? false),
+        });
+      } catch {
+        // silencioso: si falla, no rompas el post
+      } finally {
+        if (!cancelled) setStatsLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [API, postSlug]);
+
+  useEffect(() => {
+    if (!API) return;
+    if (!postSlug) return;
+
+    (async () => {
+      const data = await countViewOnce(API, postSlug);
+      if (!data) return;
+      setStats((s) => ({
+        ...s,
+        views: Number(data.views ?? s.views),
+        likes: Number(data.likes ?? s.likes),
+      }));
+    })();
+  }, [API, postSlug]);
+
+  const onLike = async () => {
+    if (!API) return;
+    if (!postSlug) return;
+    if (likeBusy) return;
+
+    setLikeBusy(true);
+    try {
+      const data = await toggleLike(API, postSlug);
+      setStats((s) => ({
+        ...s,
+        likes: Number(data.likes ?? s.likes),
+        views: Number(data.views ?? s.views),
+        liked: typeof data.liked === "boolean" ? data.liked : !s.liked,
+      }));
+    } catch {
+      // silencioso
+    } finally {
+      setLikeBusy(false);
+    }
+  };
+
+
   const onTocClick = (item: TocItem) => {
     scrollToHeading(item.id);
     setActiveId(item.id);
@@ -181,6 +259,22 @@ export default function PostPage() {
             <div className="postMeta">
               {post.date}
               {post.tags?.length ? <span> · {post.tags.join(" · ")}</span> : null}
+
+              <span className="postStats">
+              {" · "}
+              {statsLoading ? "…" : `${stats.views} visitas`}
+              {" · "}
+              <button
+                type="button"
+                className={["likeBtn", stats.liked ? "liked" : ""].join(" ")}
+                onClick={onLike}
+                disabled={likeBusy}
+                aria-pressed={stats.liked}
+                title={stats.liked ? "Quitar like" : "Dar like"}
+              >
+                {stats.liked ? "💜" : "🤍"} {stats.likes}
+              </button>
+            </span>
             </div>
           </header>
 

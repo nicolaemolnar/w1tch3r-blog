@@ -1,5 +1,6 @@
 {
   "files": [
-    "Despliegue_aplicaciones_Docker-Compose.md"
+    "Despliegue_aplicaciones_Docker-Compose.md",
+    "Instalacion_Entorno_HTB.md"
   ]
 }

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import remarkDirective from "remark-directive";
+import remarkUnderlineDirective from "../plugins/remarkUnderlineDirective.ts";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 
@@ -302,7 +304,7 @@ export default function PostPage() {
           ) : null}
 
           <article className="markdown">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkDirective, remarkUnderlineDirective]} rehypePlugins={[rehypeSlug]}>
               {post.content}
             </ReactMarkdown>
           </article>

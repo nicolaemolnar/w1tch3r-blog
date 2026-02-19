@@ -20,9 +20,23 @@ export const CHANGE_TYPE_LABEL: Record<ChangeType, string> = {
 
 export const CHANGELOG: ChangeEntry[] = [
   {
+    id: "0.8.3",
+    version: "0.8.3",
+    date: "2026-02-19",
+    type: "fix",
+    title: "Corrección de fallos menores",
+    summary: "Se corrigen enlaces a Changelog y Blog en la página principal. Además, las últimas fechas de versiones estaban incorrectas, se actualizan a las fechas reales de cada commit.",
+    items: [
+      "Corrección de enlace a Changelog en `src/pages/Home.tsx`.",
+      "Corrección de enlace a Blog en `src/pages/Home.tsx`.",
+      "Actualización de fechas en `CHANGELOG` para reflejar fechas reales de commits.",
+    ],
+    tags: ["fix", "home", "changelog", "blog"],
+  },
+  {
     id: "0.8.2",
     version: "0.8.2",
-    date: "2026-02-23",
+    date: "2026-02-19",
     type: "improvement",
     title: "Refactorización de Roadmap por ChangeLog",
     summary: "Se rediseña el módulo de Roadmap para enfocarlo en la presentación de cambios y actualizaciones del portfolio.",

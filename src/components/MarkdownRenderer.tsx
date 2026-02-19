@@ -1,5 +1,6 @@
 import { isValidElement, useMemo, useState, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
+import type { Components } from "react-markdown";
 import remarkDirective from "remark-directive";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
@@ -66,14 +67,14 @@ function CopyButton({ text }: { text: string }) {
 }
 
 export default function MarkdownRenderer({ content, resolveImageSrc }: Props) {
-  const markdownComponents = useMemo(
+  const markdownComponents = useMemo<Components>(
     () => ({
-      img: ({ src = "", alt = "", ...props }: { src?: string; alt?: string }) => (
+      img: ({ node: _node, src = "", alt = "", ...props }) => (
         <img src={resolveImageSrc(src)} alt={alt} loading="lazy" {...props} />
       ),
-      pre: ({ children }: { children: ReactNode }) => {
+      pre: ({ node: _node, children, ...props }) => {
         const extracted = extractCodeFromPre(children);
-        if (!extracted) return <pre>{children}</pre>;
+        if (!extracted) return <pre {...props}>{children}</pre>;
 
         const language = getLanguage(extracted.className);
         const highlighterLanguage = getHighlighterLanguage(language);
@@ -102,7 +103,7 @@ export default function MarkdownRenderer({ content, resolveImageSrc }: Props) {
           </div>
         );
       },
-      code: ({ className, children, ...props }: any) => (
+      code: ({ node: _node, className, children, ...props }) => (
         <code className={className} {...props}>
           {children}
         </code>

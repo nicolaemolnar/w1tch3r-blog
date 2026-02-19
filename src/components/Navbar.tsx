@@ -60,7 +60,7 @@ export default function Navbar() {
           <NavLink to="/projects" className={cx}>Projects</NavLink>
           <NavLink to="/blog" className={cx}>Blog</NavLink>
           <NavLink to="/about" className={cx}>About</NavLink>
-          <NavLink to="/backlog" className={cx}>Backlog</NavLink>
+          <NavLink to="/backlog" className={cx}>Changelog</NavLink>
           <NavLink to="/contact" className={cx}>Contact</NavLink>
         </nav>
 
@@ -92,7 +92,7 @@ export default function Navbar() {
             <NavLink to="/projects" className={cx} onClick={() => setOpen(false)}>Projects</NavLink>
             <NavLink to="/blog" className={cx} onClick={() => setOpen(false)}>Blog</NavLink>
             <NavLink to="/about" className={cx} onClick={() => setOpen(false)}>About</NavLink>
-            <NavLink to="/backlog" className={cx} onClick={() => setOpen(false)}>Backlog</NavLink>
+            <NavLink to="/backlog" className={cx} onClick={() => setOpen(false)}>Changelog</NavLink>
             <NavLink to="/contact" className={cx} onClick={() => setOpen(false)}>Contact</NavLink>
           </nav>
         </div>

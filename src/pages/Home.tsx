@@ -1,4 +1,4 @@
-// src/pages/Home.tsx
+﻿// src/pages/Home.tsx
 import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import Card from "../components/Card";
@@ -79,13 +79,12 @@ export default function Home() {
         </Card>
 
         <Card>
-          <h2 className="h2">Siguientes pasos</h2>
+          <h2 className="h2">Ultimos cambios</h2>
           <p className="muted">
-            En "Backlog" documento los siguientes objetivos en forma de árbol de progreso.
-            Cada semana intento actualizarlo para que cualquiera pueda estar al tanto de lo que
-            ocurre en el portfolio.
+            En "Changelog" publico las actualizaciones del portfolio de forma cronologica.
+            Puedes revisar nuevas funciones, mejoras de UX, correcciones y contenido reciente.
           </p>
-          <Link className="inline-link" to="/backlog">Ir a Backlog →</Link>
+          <Link className="inline-link" to="/backlog">Ir a Changelog →</Link>
         </Card>
       </section>
 

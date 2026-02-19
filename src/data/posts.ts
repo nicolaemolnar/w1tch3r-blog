@@ -18,6 +18,7 @@ export type BlogPost = {
   summary: string;
   draft: boolean;
   content: string; // markdown
+  file: string; // ruta relativa dentro de /posts
 };
 
 export type BlogPostMeta = Omit<BlogPost, "content">;
@@ -30,7 +31,9 @@ function baseUrl(): string {
 }
 
 function slugFromFile(file: string) {
-  return file.replace(/\.md$/i, "");
+  const noExt = file.replace(/\.md$/i, "");
+  const parts = noExt.split("/").filter(Boolean);
+  return parts[parts.length - 1] ?? noExt;
 }
 
 function asString(v: unknown, fallback = ""): string {
@@ -97,7 +100,7 @@ function buildPostFromRaw(file: string, raw: string): BlogPost {
 
   const summary = asString(data.summary, "") || excerpt(content);
 
-  return { slug, title, date, tags, summary, draft, content };
+  return { slug, title, date, tags, summary, draft, content, file };
 }
 
 function sortByDateDesc(posts: BlogPost[]) {

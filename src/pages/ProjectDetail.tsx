@@ -15,6 +15,14 @@ function prefersReducedMotion() {
   return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 }
 
+function resolveProjectAsset(projectSlug: string, src: string) {
+  if (!src) return src;
+  if (/^[a-z]+:/i.test(src) || src.startsWith("/")) return src;
+
+  const base = `${import.meta.env.BASE_URL}projects/${projectSlug}/`;
+  return `${base}${src}`;
+}
+
 const HEADER_OFFSET = 96;
 const SIDEBAR_WIDTH = 320;
 const SIDEBAR_GAP = 24;
@@ -234,7 +242,15 @@ export default function ProjectDetailPage() {
           ) : null}
 
           <article className="markdown">
-            <ReactMarkdown remarkPlugins={[remarkGfm, remarkDirective, remarkUnderlineDirective]} rehypePlugins={[rehypeSlug]}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkDirective, remarkUnderlineDirective]}
+              rehypePlugins={[rehypeSlug]}
+              components={{
+                img: ({ src = "", alt = "", ...props }) => (
+                  <img src={resolveProjectAsset(projectSlug, src)} alt={alt} loading="lazy" {...props} />
+                ),
+              }}
+            >
               {project.content}
             </ReactMarkdown>
           </article>

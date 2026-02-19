@@ -1,11 +1,7 @@
 // src/pages/ProjectDetail.tsx
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkDirective from "remark-directive";
-import remarkUnderlineDirective from "../plugins/remarkUnderlineDirective.ts";
-import remarkGfm from "remark-gfm";
-import rehypeSlug from "rehype-slug";
+import MarkdownRenderer from "../components/MarkdownRenderer";
 
 import Tag from "../components/Tag";
 import { getProjectBySlug, type Project } from "../data/projects";
@@ -242,17 +238,10 @@ export default function ProjectDetailPage() {
           ) : null}
 
           <article className="markdown">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkDirective, remarkUnderlineDirective]}
-              rehypePlugins={[rehypeSlug]}
-              components={{
-                img: ({ src = "", alt = "", ...props }) => (
-                  <img src={resolveProjectAsset(projectSlug, src)} alt={alt} loading="lazy" {...props} />
-                ),
-              }}
-            >
-              {project.content}
-            </ReactMarkdown>
+            <MarkdownRenderer
+              content={project.content}
+              resolveImageSrc={(src) => resolveProjectAsset(projectSlug, src)}
+            />
           </article>
         </main>
       </div>

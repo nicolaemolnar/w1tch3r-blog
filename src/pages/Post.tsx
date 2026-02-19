@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkDirective from "remark-directive";
-import remarkUnderlineDirective from "../plugins/remarkUnderlineDirective.ts";
-import remarkGfm from "remark-gfm";
-import rehypeSlug from "rehype-slug";
+import MarkdownRenderer from "../components/MarkdownRenderer";
 
 import { getPostBySlug, type BlogPost } from "../data/posts";
 import { buildTocFromHeadings, extractHeadings, type TocItem } from "../utils/toc";
@@ -313,17 +309,10 @@ export default function PostPage() {
           ) : null}
 
           <article className="markdown">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkDirective, remarkUnderlineDirective]}
-              rehypePlugins={[rehypeSlug]}
-              components={{
-                img: ({ src = "", alt = "", ...props }) => (
-                  <img src={resolvePostAsset(post.file, src)} alt={alt} loading="lazy" {...props} />
-                ),
-              }}
-            >
-              {post.content}
-            </ReactMarkdown>
+            <MarkdownRenderer
+              content={post.content}
+              resolveImageSrc={(src) => resolvePostAsset(post.file, src)}
+            />
           </article>
         </main>
       </div>

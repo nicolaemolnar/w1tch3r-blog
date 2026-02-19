@@ -1,1 +1,0 @@
-import{t as e}from"./index-BODRz9jD.js";var t=e(((e,t)=>{function n(e){return{name:`Clojure REPL`,contains:[{className:`meta`,begin:/^([\w.-]+|\s*#_)?=>/,starts:{end:/$/,subLanguage:`clojure`}}]}}t.exports=n}));export default t();

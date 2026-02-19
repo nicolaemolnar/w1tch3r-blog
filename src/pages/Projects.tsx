@@ -69,7 +69,7 @@ export default function Projects() {
 
   return (
     <div className="stack-lg">
-      <header className="stack">
+      <header className="stack highlightHero">
         <h1 className="title">Proyectos</h1>
         <p className="lead">
           Archivo de mis proyectos personales, educativos y profesionales que pueden ser expuestos al público.

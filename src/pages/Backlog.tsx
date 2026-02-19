@@ -74,8 +74,7 @@ export default function Backlog() {
 
   return (
     <div className="stack-lg">
-      <header className="changelogHero">
-        <p className="kicker">Portfolio Updates</p>
+      <header className="highlightHero">
         <h1 className="title">Changelog</h1>
         <p className="lead">
           Historial visual de cambios del portfolio: nuevas funciones, mejoras, contenido y correcciones.

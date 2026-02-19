@@ -175,7 +175,7 @@ export default function ProjectDetailPage() {
         }}
       >
         <main className="postMain">
-          <header className="postHeader">
+          <header className="postHeader highlightHero">
             <div style={{ marginBottom: 8 }}>
               <Link className="inline-link" to="/projects">
                 ← Volver a Proyectos

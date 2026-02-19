@@ -151,7 +151,7 @@ export default function Blog() {
 
   return (
     <div className="stack-lg">
-      <header className="stack">
+      <header className="stack highlightHero">
         <h1 className="title">Blog</h1>
         <p className="lead">
           Posts cortos y prácticos: decisiones, errores comunes, aprendizajes y notas técnicas.

@@ -4,7 +4,7 @@ import SocialLinks from "../components/SocialLinks";
 export default function Contact() {
   return (
     <div className="stack-lg">
-      <header className="stack">
+      <header className="stack highlightHero">
         <h1 className="title">Contacto</h1>
         <p className="lead">Si quieres hablar de un proyecto, dar feedback o colaborar con algo, aquí tienes mi información de contacto.</p>
       </header>

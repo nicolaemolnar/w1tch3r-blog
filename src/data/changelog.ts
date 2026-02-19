@@ -20,6 +20,19 @@ export const CHANGE_TYPE_LABEL: Record<ChangeType, string> = {
 
 export const CHANGELOG: ChangeEntry[] = [
   {
+    id: "0.8.4",
+    version: "0.8.4",
+    date: "2026-02-19",
+    type: "improvement",
+    title: "Mejoras visuales en el portfolio",
+    summary: "Se estandariza la mejora visual del `header` del changelog en todas las páginas del portfolio.",
+    items: [
+      "Actualización de estilos en `src/styles/global.css` para el header del changelog.",
+      "Aplicación de estilos actualizados en `src/pages/Home.tsx`, `src/pages/About.tsx`, `src/pages/Projects.tsx`, `src/pages/Blog.tsx`, `src/pages/Contact.tsx`, `src/pages/Post.tsx`.",
+    ],
+    tags: ["ui", "design", "changelog"],
+  },
+  {
     id: "0.8.3",
     version: "0.8.3",
     date: "2026-02-19",

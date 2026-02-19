@@ -261,7 +261,7 @@ export default function PostPage() {
         }}
       >
         <main className="postMain">
-          <header className="postHeader">
+          <header className="postHeader highlightHero">
             <h1 className="postTitle">{post.title}</h1>
             <div className="postMeta">
               {post.date}

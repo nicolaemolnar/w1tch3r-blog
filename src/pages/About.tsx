@@ -142,7 +142,7 @@ export default function About() {
 
   return (
     <div className="stack-lg">
-      <header className="stack">
+      <header className="stack highlightHero">
         <h1 className="title">About</h1>
         <p className="lead">Resumen profesional, enfoque y stack/competencias.</p>
       </header>

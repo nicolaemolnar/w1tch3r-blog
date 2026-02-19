@@ -1,6 +1,6 @@
 /* src/styles/roadmap.css */
 
-.changelogHero {
+.highlightHero {
   position: relative;
   border: 1px solid var(--border);
   border-radius: 20px;

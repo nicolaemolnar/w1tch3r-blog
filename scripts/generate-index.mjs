@@ -6,6 +6,18 @@ async function generate_index (md_path) {
   const files = (await readdir(dir))
     .filter((f) => f.toLowerCase().endsWith(".md"))
     .sort();
+  const folders = (await readdir(dir, { withFileTypes: true }))
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
+    .sort();
+
+  for (const folder of folders) {
+    const subdir = path.join(dir, folder);
+    const subfiles = (await readdir(subdir))
+      .filter((f) => f.toLowerCase().endsWith(".md"))
+      .sort();
+    files.push(...subfiles.map((f) => folder + "/" + f));
+  }
 
   await writeFile(
     path.join(dir, "index.json"),

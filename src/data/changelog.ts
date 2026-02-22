@@ -20,6 +20,19 @@ export const CHANGE_TYPE_LABEL: Record<ChangeType, string> = {
 
 export const CHANGELOG: ChangeEntry[] = [
   {
+    id: "0.8.5",
+    version: "0.8.5",
+    date: "2026-02-19",
+    type: "content",
+    title: "Publicación de writeup de HTB: OnlyHacks",
+    summary: "Se agrega nuevo contenido al blog con un writeup detallado de la máquina OnlyHacks de Hack The Box.",
+    items: [
+      "Nuevo writeup `OnlyHacks_HTB`.",
+      "Actualización de `posts/index.json` para incluir el nuevo post.",
+    ],
+    tags: ["blog", "content", "writeup", "htb"],
+  },
+  {
     id: "0.8.4",
     version: "0.8.4",
     date: "2026-02-19",

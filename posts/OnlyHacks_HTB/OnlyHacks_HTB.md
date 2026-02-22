@@ -3,7 +3,7 @@ title: "(Writeup) OnlyHacks - Hack The Box"
 date: "2026-02-23"
 tags: ["HTB", "Evento", "XSS", "IDOR", "Linux"]
 summary: "Writeup de resolución de la máquina `OnlyHacks` de HTB."
-draft: true
+draft: false
 ---
 
 ## 1. Resumen

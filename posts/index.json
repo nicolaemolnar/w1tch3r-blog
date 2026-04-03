@@ -2,6 +2,7 @@
   "files": [
     "Despliegue_aplicaciones_Docker-Compose.md",
     "Instalacion_Entorno_HTB.md",
+    "Conversor_HTB/Conversor_HTB.md",
     "OnlyHacks_HTB/OnlyHacks_HTB.md"
   ]
 }

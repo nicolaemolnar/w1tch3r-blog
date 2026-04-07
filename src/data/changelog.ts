@@ -20,6 +20,19 @@ export const CHANGE_TYPE_LABEL: Record<ChangeType, string> = {
 
 export const CHANGELOG: ChangeEntry[] = [
   {
+    id: "0.8.6",
+    version: "0.8.6",
+    date: "2026-04-03",
+    type: "content",
+    title: "Publicación de writeup de HTB: Conversor",
+    summary: "Se agrega nuevo contenido al blog con un writeup detallado de la máquina Conversor de Hack The Box.",
+    items: [
+      "Nuevo writeup `Conversor_HTB`.",
+      "Actualización de `posts/index.json` para incluir el nuevo post.",
+    ],
+    tags: ["blog", "content", "writeup", "htb"],
+  },
+  {
     id: "0.8.5",
     version: "0.8.5",
     date: "2026-02-19",

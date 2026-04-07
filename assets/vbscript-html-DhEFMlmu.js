@@ -1,0 +1,1 @@
+import{t as e}from"./index-ql8aP_UT.js";var t=e(((e,t)=>{function n(e){return{name:`VBScript in HTML`,subLanguage:`xml`,contains:[{begin:`<%`,end:`%>`,subLanguage:`vbscript`}]}}t.exports=n}));export default t();

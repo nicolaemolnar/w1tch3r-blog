@@ -1,4 +1,4 @@
-﻿// src/pages/Home.tsx
+// src/pages/Home.tsx
 import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import Card from "../components/Card";

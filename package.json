@@ -9,6 +9,7 @@
     "prebuild": "move ./posts ./public && move ./projects ./public && node scripts/generate-index.mjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test": "node --test tests/*.test.mjs",
     "preview": "vite preview",
     "predeploy": "npm run build && node -e \"require('fs').writeFileSync('dist/.nojekyll','')\" && move ./public/posts ./ && move ./public/projects ./",
     "deploy": "gh-pages -d dist --dotfiles"

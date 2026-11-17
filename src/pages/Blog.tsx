@@ -222,6 +222,12 @@ export default function Blog() {
           <span className="muted">Últimos 14 días</span>
         </div>
 
+        {recentPosts.length === 0 && (
+          <Card>
+            <p className="muted">No hay publicaciones en los últimos 14 días.</p>
+          </Card>
+        )}
+
         <div className="grid-3">
           {recentPosts.map((p) => (
             <Card key={p.slug}>

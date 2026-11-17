@@ -96,5 +96,5 @@ export function isRecentlyPublished(post: BlogPost, days = 14) {
 export function getRecentlyPublished(posts: BlogPost[], days = 14, max = 3) {
   const sorted = sortPosts(posts, "newest");
   const recent = sorted.filter((p: BlogPost) => isRecentlyPublished(p, days)).slice(0, max);
-  return recent.length ? recent : sorted.slice(0, max);
+  return recent;
 }

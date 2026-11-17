@@ -1,15 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import MarkdownRenderer from "../components/MarkdownRenderer";
+import MarkdownArticle from "../components/MarkdownArticle";
 
 import { getPostBySlug, type BlogPost } from "../data/posts";
-import { buildTocFromHeadings, extractHeadings, type TocItem } from "../utils/toc";
 
 import { fetchPostStats, countViewOnce, toggleLike } from "../lib/counters";
-
-function prefersReducedMotion() {
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-}
 
 function resolvePostAsset(postFile: string, src: string) {
   if (!src) return src;
@@ -20,24 +15,6 @@ function resolvePostAsset(postFile: string, src: string) {
   return `${base}${src}`;
 }
 
-const HEADER_OFFSET = 96;
-const SIDEBAR_WIDTH = 320;
-const SIDEBAR_GAP = 24;
-
-function scrollToHeading(id: string) {
-  const el = document.getElementById(id);
-  if (!el) return;
-
-  const y = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
-
-  window.scrollTo({
-    top: y,
-    behavior: prefersReducedMotion() ? "auto" : "smooth",
-  });
-
-  history.replaceState(null, "", `#${encodeURIComponent(id)}`);
-}
-
 export default function PostPage() {
   const { slug } = useParams<{ slug: string }>();
 
@@ -46,20 +23,8 @@ export default function PostPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  // Derivados seguros (para que useMemo exista siempre)
+  // Identificador disponible mientras se carga el post.
   const postSlug = post?.slug ?? slug ?? "";
-  const content = post?.content ?? "";
-
-  const headings = useMemo(() => {
-    // Si aún no hay post, no hay headings
-    if (!content) return [];
-    return extractHeadings(content);
-  }, [postSlug, content]);
-
-  const toc = useMemo(() => buildTocFromHeadings(headings), [headings]);
-
-  const [activeId, setActiveId] = useState<string>("");
-
   const API = import.meta.env.VITE_COUNTERS_API as string | undefined;
 
   const [stats, setStats] = useState<{ views: number; likes: number; liked: boolean }>({
@@ -69,7 +34,6 @@ export default function PostPage() {
   });
   const [statsLoading, setStatsLoading] = useState(false);
   const [likeBusy, setLikeBusy] = useState(false);
-
 
   // Cargar post (async)
   useEffect(() => {
@@ -122,49 +86,6 @@ export default function PostPage() {
       cancelled = true;
     };
   }, [slug]);
-
-  // Cuando cambia el toc, fija activeId inicial
-  useEffect(() => {
-    if (toc[0]?.id) setActiveId(toc[0].id);
-  }, [toc]);
-
-  // Scroll-spy
-  useEffect(() => {
-    if (!toc.length) return;
-
-    const elements = toc
-      .map((t) => document.getElementById(t.id))
-      .filter(Boolean) as HTMLElement[];
-
-    if (!elements.length) return;
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => (a.boundingClientRect.top ?? 0) - (b.boundingClientRect.top ?? 0))[0];
-
-        if (visible?.target?.id) setActiveId(visible.target.id);
-      },
-      { root: null, rootMargin: "-15% 0px -70% 0px", threshold: [0, 1] }
-    );
-
-    elements.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, [postSlug, toc]);
-
-  // Hash al entrar (ya con IDs reales del DOM)
-  useEffect(() => {
-    if (!post) return; // solo cuando ya hay contenido renderizable
-
-    const hash = window.location.hash;
-    if (!hash) return;
-
-    const id = decodeURIComponent(hash.replace("#", ""));
-    requestAnimationFrame(() => {
-      if (document.getElementById(id)) scrollToHeading(id);
-    });
-  }, [post]);
 
   useEffect(() => {
     if (!API) return;
@@ -230,12 +151,6 @@ export default function PostPage() {
     }
   };
 
-
-  const onTocClick = (item: TocItem) => {
-    scrollToHeading(item.id);
-    setActiveId(item.id);
-  };
-
   // ✅ Render condicional DESPUÉS de hooks
   if (loading) {
     return (
@@ -253,112 +168,34 @@ export default function PostPage() {
   }
 
   return (
-    <div className="postLayout">
-      <div
-        className="postContainer"
-        style={{
-          paddingRight: toc.length ? undefined : SIDEBAR_WIDTH + SIDEBAR_GAP,
-        }}
-      >
-        <main className="postMain">
-          <header className="postHeader highlightHero">
-            <h1 className="postTitle">{post.title}</h1>
-            <div className="postMeta">
-              {post.date}
-              {post.tags?.length ? <span> · {post.tags.join(" · ")}</span> : null}
+    <MarkdownArticle
+      key={post.slug}
+      content={post.content}
+      resolveImageSrc={(src) => resolvePostAsset(post.file, src)}
+    >
+      <header className="postHeader highlightHero">
+        <h1 className="postTitle">{post.title}</h1>
+        <div className="postMeta">
+          {post.date}
+          {post.tags?.length ? <span> · {post.tags.join(" · ")}</span> : null}
 
-              <span className="postStats">
-              {" · "}
-              {statsLoading ? "…" : `${stats.views} visitas`}
-              {" · "}
-              <button
-                type="button"
-                className={["likeBtn", stats.liked ? "liked" : ""].join(" ")}
-                onClick={onLike}
-                disabled={likeBusy}
-                aria-pressed={stats.liked}
-                title={stats.liked ? "Quitar like" : "Dar like"}
-              >
-                {stats.liked ? "💜" : "🤍"} {stats.likes}
-              </button>
-            </span>
-            </div>
-          </header>
-
-          {/* TOC móvil */}
-          {toc.length ? (
-            <details className="postTocMobile">
-              <summary>Índice</summary>
-              <nav className="postTocNav">
-                {toc.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => onTocClick(item)}
-                    className={[
-                      "postTocBtn",
-                      item.level === 3 ? "lvl3" : item.level === 4 ? "lvl4" : "lvl2",
-                      activeId === item.id ? "active" : "",
-                    ].join(" ")}
-                    type="button"
-                  >
-                    {item.text}
-                  </button>
-                ))}
-              </nav>
-            </details>
-          ) : null}
-
-          <article className="markdown">
-            <MarkdownRenderer
-              content={post.content}
-              resolveImageSrc={(src) => resolvePostAsset(post.file, src)}
-            />
-          </article>
-        </main>
-      </div>
-
-      {/* Sidebar fijo (desktop) */}
-      {toc.length ? (
-        <aside
-          className="postSidebar"
-          style={{
-            top: HEADER_OFFSET,
-            width: SIDEBAR_WIDTH,
-          }}
-        >
-          <div className="postSidebarInner">
-            <div className="postSidebarTitle">Índice</div>
-
-            <nav className="postTocNav">
-              {toc.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => onTocClick(item)}
-                  className={[
-                    "postTocBtn",
-                    item.level === 3 ? "lvl3" : item.level === 4 ? "lvl4" : "lvl2",
-                    activeId === item.id ? "active" : "",
-                  ].join(" ")}
-                  aria-current={activeId === item.id ? "true" : "false"}
-                  type="button"
-                >
-                  {item.text}
-                </button>
-              ))}
-            </nav>
-
-            <button
-              className="postBackTop"
-              onClick={() =>
-                window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" })
-              }
-              type="button"
-            >
-              Volver arriba
-            </button>
-          </div>
-        </aside>
-      ) : null}
-    </div>
+          <span className="postStats">
+          {" · "}
+          {statsLoading ? "…" : `${stats.views} visitas`}
+          {" · "}
+          <button
+            type="button"
+            className={["likeBtn", stats.liked ? "liked" : ""].join(" ")}
+            onClick={onLike}
+            disabled={likeBusy}
+            aria-pressed={stats.liked}
+            title={stats.liked ? "Quitar like" : "Dar like"}
+          >
+            {stats.liked ? "💜" : "🤍"} {stats.likes}
+          </button>
+        </span>
+        </div>
+      </header>
+    </MarkdownArticle>
   );
 }

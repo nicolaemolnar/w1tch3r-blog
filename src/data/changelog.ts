@@ -20,6 +20,36 @@ export const CHANGE_TYPE_LABEL: Record<ChangeType, string> = {
 
 export const CHANGELOG: ChangeEntry[] = [
   {
+    id: "0.8.8",
+    version: "0.8.8",
+    date: "2026-11-17",
+    type: "improvement",
+    title: "Mejoras de navegación y robustez del portfolio",
+    summary: "Se unifica la navegación de artículos y proyectos y se mejora la accesibilidad del desplazamiento y la presentación de fechas.",
+    items: [
+      "Los cambios de página, los enlaces del índice y Volver arriba respetan la preferencia de movimiento reducido.",
+      "Las fechas vacías, inválidas o imposibles muestran 'Fecha no disponible'.",
+      "Artículos y proyectos comparten el renderizado Markdown, el índice móvil y de escritorio y el seguimiento de la sección visible.",
+      "Se corrige el tipado del enlace a Hack The Box y se eliminan los archivos de ejemplo de React sin uso.",
+      "Se normaliza la página de inicio a UTF-8 sin BOM y se añaden comprobaciones de codificación, fechas y navegación.",
+    ],
+    tags: ["accessibility", "blog", "projects", "navigation", "maintenance"],
+  },
+  {
+    id: "0.8.7",
+    version: "0.8.7",
+    date: "2026-11-17",
+    type: "fix",
+    title: "Corrección de publicaciones recientes en el blog",
+    summary: "La sección Recién publicados muestra únicamente posts de los últimos 14 días.",
+    items: [
+      "Se elimina la sustitución por posts antiguos cuando no hay publicaciones recientes.",
+      "Se muestra el mensaje No hay publicaciones en los últimos 14 días cuando la sección está vacía.",
+      "Se mantiene el máximo de tres publicaciones, ordenadas de más reciente a más antigua.",
+    ],
+    tags: ["blog", "fix"],
+  },
+  {
     id: "0.8.6",
     version: "0.8.6",
     date: "2026-04-03",
